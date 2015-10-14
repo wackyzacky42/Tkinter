@@ -71,17 +71,24 @@ badges = ["executioner", "killing_spree", "grim_reaper", "hat_trick", "guardian_
 "quadra_hero_kill", "master_healer", "survivor", "exorcist", "sidekick", "exterminator", "triple_threat", "grandmaster_healer", "vanguard",
 "shooting_star", "guardian_defender", "shutout", "gigantic", "protector_savior"]
 
+def printField():
+	print("quantity: %s" % ((form["executioner"].get())))
+
 def makeForm(root, fields):
-	entries = []
+	entries = {}
 	for badge in badges:
 		row = Frame(root)
-		label = Label(row, width = 15, text = badge, anchor = "w")
+		label = Label(row, width = 20, text = badge, anchor = "w")
 		entry = Entry(row)
-		row.pack(side = TOP, fill = X, padx = 5, pady = 5)
+		row.pack(side = TOP, fill = X)
 		label.pack(side = LEFT)
 		entry.pack(side = RIGHT, expand = YES, fill = X)
-		entries.append((badge, entry))
+		entries[badge] = entry
+	bPrint = Button(root, text = "Print", command = printField)
+	bPrint.pack(side = LEFT)
 	return entries
+	
+
 
 form = makeForm(root, badges)
 	
