@@ -4,6 +4,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
+import time
 # from Tkinter import *
 
 
@@ -47,12 +48,27 @@ elem.send_keys("zackn@motiga.com")
 elem = driver.find_element_by_name("password")
 elem.send_keys("password")
 elem.send_keys(Keys.RETURN)
+time.sleep(2)
 elem = driver.find_element_by_id("email-search")
-print(elem)
-WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.ID, "email-search")))
 elem.send_keys("zackn@motiga.com")
 elem.send_keys(Keys.RETURN)
-
+time.sleep(2)
+elem = driver.find_element_by_link_text("Player Account")
+elem.click()
+time.sleep(2)
+# elem = driver.find_element_by_link_text("Player Account")#kvstoreEditModal
+# currentURL = driver.current_url
+# print(currentURL)
+# driver.get(currentURL + "#kvstoreEditModal")
+elem = driver.find_element_by_xpath("/html/body/div[2]/div[2]/div[4]/div/h2/a")
+elem.send_keys(Keys.RETURN)
+time.sleep(2)
+elem = driver.find_element_by_xpath("/html/body/div[2]/div[2]/div[4]/div/div/div/div/form/div[1]/textarea")
+profile_text = dict(elem.text)
+print profile_text.get("totalgold")
+# print elem.text
+# elem.clear()
+# elem.send_keys(profile_text)
 
 # actions.click()
 # assert "Nominations" in driver.title

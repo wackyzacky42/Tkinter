@@ -1,0 +1,161 @@
+# -*- coding: utf-8 -*-
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.support.ui import Select
+from selenium.common.exceptions import NoSuchElementException
+from selenium.common.exceptions import NoAlertPresentException
+import unittest, time, re
+import random
+ 
+url = "https://www.gogigantic.com"
+validEmail = "automation@motiga.com"
+validPass = "Automation1"
+
+
+class Core(unittest.TestCase):
+    """ Author: Dusty Stokes (dustys@motiga.com) """ 
+
+    def setUp(self):
+        """ Author: Dusty Stokes (dustys@motiga.com) """ 
+        # Sets up Firefox webdriver
+        self.driver = webdriver.Firefox()
+        # Wait 5 seconds before failing cases
+        self.driver.implicitly_wait(5)
+        self.verificationErrors = []
+        self.accept_next_alert = True
+
+    def test_HomePage(self):
+        """ Author: Dusty Stokes (dustys@motiga.com) """ 
+        driver = self.driver 
+        driver.get(url)
+        if not 'GoGigantic.com' in self.driver.title:
+            raise Exception("Incorrect or no page title")
+        if not driver.find_element_by_css_selector('.header-nav-dropdown'):
+            raise Exception("No nav bar")
+        if not driver.find_element_by_css_selector('.bttn_cta'):
+            raise Exception("No Sign up link in banner")
+        if not driver.find_element_by_css_selector('.alpha_signup_button'):
+            raise Exception("No sign up link in nav")
+        if not driver.find_element_by_css_selector('#auth1_ident'):
+            raise Exception("No sign in button")
+        driver.find_element_by_css_selector('.news-title').click()
+        if not driver.find_element_by_css_selector('.byline'):
+            raise Exception("No news article")
+        driver.find_element_by_css_selector('.news-detail-collapse').click()
+        if not driver.find_element_by_css_selector('#bb_heroes'):
+            raise Exception("No heroes section")
+        if not driver.find_element_by_css_selector('#media_header'):
+            raise Exception("No media section")
+        if not driver.find_element_by_css_selector('#bb_connect'):
+            raise Exception("No connect section")
+        driver.find_element_by_xpath("/html/body/div[2]/div/section[5]/div[2]/div/div[2]/form/input[2]").click()
+        noInput = driver.find_element_by_css_selector('.signup-feedback')
+        if not 'Sorry, you are not old enough to subscribe to our newsletter.' in noInput.text:
+            raise Exception("Wrong error message - No Newsletter input")
+        driver.find_element_by_css_selector('#confirm-age').click()
+        driver.find_element_by_xpath("/html/body/div[2]/div/section[5]/div[2]/div/div[2]/form/input[2]").click()
+        ageCheckedNoEmail = driver.find_element_by_css_selector('.signup-feedback')
+        if not 'Please enter a valid email address.' in ageCheckedNoEmail.text:
+            raise Exception("Wrong error message - Newsletter Age Checked, No Email")        
+        driver.find_element_by_xpath("/html/body/div[2]/div/section[5]/div[2]/div/div[2]/form/input[1]").send_keys("oifoaiwfef")
+        driver.find_element_by_xpath("/html/body/div[2]/div/section[5]/div[2]/div/div[2]/form/input[2]").click()
+        ageCheckedBadEmail = driver.find_element_by_css_selector('.signup-feedback')
+        if not 'Please enter a valid email address.' in ageCheckedBadEmail.text:
+            raise Exception("Wrong error message - Newsletter Age Checked, Bad Email")  
+        driver.find_element_by_css_selector('#confirm-age').click()
+        driver.find_element_by_xpath("/html/body/div[2]/div/section[5]/div[2]/div/div[2]/form/input[2]").click()
+        ageUncheckedBadEmail = driver.find_element_by_css_selector('.signup-feedback')
+        if not 'Sorry, you are not old enough to subscribe to our newsletter' in ageUncheckedBadEmail.text:
+            raise Exception("Wrong error message - Newsletter Age unchecked, Bad email")
+        dateStamp = str(random.random())
+        driver.find_element_by_xpath("/html/body/div[2]/div/section[5]/div[2]/div/div[2]/form/input[1]").clear()
+        driver.find_element_by_xpath("/html/body/div[2]/div/section[5]/div[2]/div/div[2]/form/input[1]").send_keys("automation+" + dateStamp + "@motiga.com")
+        driver.find_element_by_css_selector('#confirm-age').click()        
+        ageUncheckedGoodEmail = driver.find_element_by_css_selector('.signup-feedback')
+        if not 'Sorry, you are not old enough to subscribe to our newsletter' in ageUncheckedGoodEmail.text:
+            raise Exception("Wrong error - Newsletter Age unchecked, Good email")
+        driver.find_element_by_xpath("/html/body/div[2]/div/section[5]/div[2]/div/div[2]/form/input[2]").click()
+        message = driver.find_element_by_css_selector('.signup-feedback')
+        time.sleep(1)
+        if not 'on the list!' in message.text:
+            raise Exception("Wrong confimation - Successful signup")
+        if not driver.find_element_by_css_selector('#GlobalFooter'):
+            raise Exception("No footer")
+
+    def test_HeroesPage(self):
+        """ Author: Dusty Stokes (dustys@motiga.com) """
+        driver = self.driver 
+        driver.get(url)
+        driver.find_element_by_xpath("/html/body/div[1]/div[2]/div/ul/li[2]/a").click()
+        if not 'GoGigantic.com' in self.driver.title:
+            raise Exception("Incorrect or no page title")
+        newurl = url + "/en/heroes"    
+        if not newurl in driver.current_url:
+            raise Exception("Incorrect URL")
+
+    def test_GamePage(self):
+        """ Author: Dusty Stokes (dustys@motiga.com) """
+        driver = self.driver 
+        driver.get(url)
+        driver.find_element_by_xpath("/html/body/div[1]/div[2]/div/ul/li[3]/a").click()
+        if not 'GoGigantic.com' in self.driver.title:
+            raise Exception("Incorrect or no page title")
+        newurl = url + "/en/game"    
+        if not newurl in driver.current_url:
+            raise Exception("Incorrect URL")    
+        if not driver.find_element_by_css_selector('.header-nav-dropdown'):
+            raise Exception("No nav")           
+        if not driver.find_element_by_css_selector(".guardian-feature"):
+            raise Exception("No guardian feature")
+        if not driver.find_element_by_css_selector("#choose-your-hero"):
+            raise Exception("No choose your heroes")
+        if not driver.find_element_by_css_selector("#control-the-battleground"):
+            raise Exception("No control the battleground")
+        if not driver.find_element_by_css_selector("#power-your-guardian"):
+            raise Exception("No Power your guardian")
+        if not driver.find_element_by_css_selector("#attack-and-defend"):
+            raise Exception("No attack and defend")
+        if not driver.find_element_by_css_selector("#inflict-a-wound"):
+            raise Exception("No inflict a wound")
+        if not driver.find_element_by_css_selector("#the-clash"):
+            raise Exception("No clash section")     
+        if not driver.find_element_by_css_selector  ("#GlobalFooter"):
+            raise Exception("No footer")
+
+    def test_News(self):
+        """ Author: Dusty Stokes (dustys@motiga.com) """
+        driver = self.driver 
+        driver.get(url)
+        driver.find_element_by_xpath("/html/body/div[1]/div[2]/div/ul/li[1]/a").click()
+        if not 'Gigantic News' in self.driver.title:
+            raise Exception("Incorrect or no page title")
+        newurl = url + "/en/news"    
+        if not newurl in driver.current_url:
+            raise Exception("Incorrect URL")
+        if not driver.find_element_by_css_selector('.header-nav-dropdown'):
+            raise Exception("No nav bar")
+        if not driver.find_element_by_css_selector('.news-categories'):
+            raise Exception("No Categories widget")           
+        if not driver.find_element_by_css_selector('.cta-wrapper'):
+            raise Exception("No call to action items (Press releases/fankit)")
+        if not driver.find_element_by_css_selector('#TwitterWidget'):
+            raise Exception("No Twitter Widget")
+        if not driver.find_elements_by_css_selector('.featureWonk'):
+            raise Exception("No featured article")
+        if not driver.find_element_by_css_selector('#RecentNews'):
+            raise Exception("No Recent news")
+        driver.find_element_by_css_selector('.loadMore').click()    
+        if not driver.find_element_by_css_selector  ("#GlobalFooter"):
+            raise Exception("No footer")
+
+    def tearDown(self):
+        """ Author: Dusty Stokes (dustys@motiga.com) """ 
+        #Clean up and quit
+        self.driver.quit()
+        self.assertEqual([], self.verificationErrors)
+
+
+if __name__ == "__main__":
+    suite = unittest.TestLoader().loadTestsFromTestCase(Core)
+    unittest.TextTestRunner(verbosity=2).run(suite)    
