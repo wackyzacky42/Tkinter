@@ -5,6 +5,8 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
 import time
+from ast import literal_eval
+import json
 # from Tkinter import *
 
 
@@ -64,8 +66,36 @@ elem = driver.find_element_by_xpath("/html/body/div[2]/div[2]/div[4]/div/h2/a")
 elem.send_keys(Keys.RETURN)
 time.sleep(2)
 elem = driver.find_element_by_xpath("/html/body/div[2]/div[2]/div[4]/div/div/div/div/form/div[1]/textarea")
-profile_text = dict(elem.text)
-print profile_text.get("totalgold")
+#profile_string = str(elem.text[1:-1])
+#profile_dict = dict(x.split(':') for x in profile_string.split(','))
+#profile_dict = {}
+#profile_dict.update(literal_eval(str(elem.text)))
+
+profile_dict = json.loads(elem.text)
+profile_dict["totalgold"] = 42
+print profile_dict["totalgold"]
+
+#profile_dict.append((elem.get_attribute("innerHTML")).encode("utf-8"))
+#print profile_dict
+
+#print profile_dict
+#print type(profile_info)
+#profile_dict = elem.text
+# profile_str = str(elem.text)
+# profile_str = profile_str[1:-1]
+# #profile_dict.update(eval(profile_str))
+
+# #contents = str[1:-1]        # strip off leading { and trailing }
+# items = profile_str.split(',') # each individual item looks like key:value
+# print items
+# pairs = [item.split(':',1) for item in items] # ("key","value"), both strings
+# print pairs
+# profile_dict = dict((k,v) for k,v in pairs) # evaluate values but not strings
+
+# print dict(str(elem.text))
+#print profile_dict["totalgold"]
+#profile_info = eval(profile_info)
+#print profile_info["totalgold"]
 # print elem.text
 # elem.clear()
 # elem.send_keys(profile_text)
