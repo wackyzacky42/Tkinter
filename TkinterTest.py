@@ -78,9 +78,10 @@ elem.clear()
 time.sleep(4)
 profile_dict = json.dumps(profile_dict)
 print profile_dict
-# driver.execute_script("document.find_element_by_xpath('/html/body/div[2]/div[2]/div[4]/div/div/div/div/form/div[1]/textarea').value = profile_dict")
-pyperclip.copy(profile_dict)
-elem.send_keys(pyperclip.paste())
+driver.execute_script("arguments[0].value = arguments[1]", elem, profile_dict)
+#driver.execute_script("document.find_element_by_xpath('/html/body/div[2]/div[2]/div[4]/div/div/div/div/form/div[1]/textarea').value = profile_dict")
+# pyperclip.copy(profile_dict)
+# elem.send_keys(pyperclip.paste())
 # profile_dict["totalgold"] = 42
 # print profile_dict["totalgold"]
 
