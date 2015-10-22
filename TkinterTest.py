@@ -7,6 +7,7 @@ from selenium.webdriver.common.by import By
 import time
 from ast import literal_eval
 import json
+import pyperclip
 # from Tkinter import *
 
 
@@ -72,8 +73,16 @@ elem = driver.find_element_by_xpath("/html/body/div[2]/div[2]/div[4]/div/div/div
 #profile_dict.update(literal_eval(str(elem.text)))
 
 profile_dict = json.loads(elem.text)
-profile_dict["totalgold"] = 42
-print profile_dict["totalgold"]
+print profile_dict
+elem.clear()
+time.sleep(4)
+profile_dict = json.dumps(profile_dict)
+print profile_dict
+# driver.execute_script("document.find_element_by_xpath('/html/body/div[2]/div[2]/div[4]/div/div/div/div/form/div[1]/textarea').value = profile_dict")
+pyperclip.copy(profile_dict)
+elem.send_keys(pyperclip.paste())
+# profile_dict["totalgold"] = 42
+# print profile_dict["totalgold"]
 
 #profile_dict.append((elem.get_attribute("innerHTML")).encode("utf-8"))
 #print profile_dict
